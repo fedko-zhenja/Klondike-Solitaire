@@ -1,0 +1,60 @@
+.game-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.game {
+  width: 46%;
+  padding: 20px;
+}
+
+.game__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.game__deck {
+  display: flex;
+  gap: 16px;
+}
+
+.game__stock,
+.game__waste,
+.game__foundation,
+.game__column {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.game__stock,
+.game__waste,
+.game__foundation,
+.game__column {
+  width: 110px;
+  height: 150px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.game__foundations {
+  display: flex;
+  gap: 16px;
+}
+
+.game__bottom {
+  width: 100%;
+}
+
+.game__tableau {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.game__waste {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
