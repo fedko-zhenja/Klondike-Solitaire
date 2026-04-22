@@ -58,3 +58,7 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.game__stock {
+  position: relative;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "../Card/Card";
 import { Column } from "../Column/Column";
+import { StockCard } from "../StockCard/StockCard";
 import { createDeck, shuffleDeck, fillColumnsWithCards } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
@@ -13,6 +14,8 @@ const wasteDeck: ICard[] = [{ name: "card1" }, { name: "card2" }, { name: "card3
 
 export const Game = () => {
   const [elements, setElements] = useState<ICard[]>([]);
+
+  const [stockDeck, setStockDeck] = useState<TCard[]>([]);
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
 
   const onDropCard = (card: TCard, columnIndex: number) => {
@@ -40,6 +43,10 @@ export const Game = () => {
 
     const arrayColumnsWithCards = fillColumnsWithCards(shuffledDeck, columns);
     setColumns(arrayColumnsWithCards);
+
+    const arrayStockDeck = shuffledDeck.slice(28, 52);
+    setStockDeck(arrayStockDeck);
+    // console.log("arrayStockDeck", arrayStockDeck);
   }, []);
 
   return (
@@ -47,7 +54,11 @@ export const Game = () => {
       <div className="game">
         <div className="game__top">
           <div className="game__deck">
-            <div className="game__stock"></div>
+            <div className="game__stock">
+              {stockDeck.map((card, index) => (
+                <StockCard key={card.id} card={card} index={index} />
+              ))}
+            </div>
             <div className="game__waste">
               {elements.map((data, index) => (
                 <Card key={index} data={data} />
