@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card } from "../Card/Card";
 import { Column } from "../Column/Column";
+import { createDeck, shuffleDeck, fillColumnsWithCards } from "../../helper";
+import type { TCard } from "../../helper";
 import "./Game.css";
 
 export interface ICard {
@@ -11,9 +13,9 @@ const wasteDeck: ICard[] = [{ name: "card1" }, { name: "card2" }, { name: "card3
 
 export const Game = () => {
   const [elements, setElements] = useState<ICard[]>([]);
-  const [columns, setColumns] = useState<ICard[][]>([[], [], [], [], [], [], []]);
+  const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
 
-  const onDropCard = (card: ICard, columnIndex: number) => {
+  const onDropCard = (card: TCard, columnIndex: number) => {
     setElements((prev) => prev.filter((item) => item.name !== card.name));
 
     setColumns((prev) =>
@@ -27,8 +29,17 @@ export const Game = () => {
     );
   };
 
+  // useEffect(() => {
+  //   console.log("columns", columns);
+  // }, [columns]);
+
   useEffect(() => {
     setElements(wasteDeck);
+    const deck = createDeck();
+    const shuffledDeck = shuffleDeck(deck);
+
+    const arrayColumnsWithCards = fillColumnsWithCards(shuffledDeck, columns);
+    setColumns(arrayColumnsWithCards);
   }, []);
 
   return (

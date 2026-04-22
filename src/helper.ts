@@ -1,0 +1,73 @@
+export const suitSymbols = {
+  hearts: "♥",
+  diamonds: "♦",
+  clubs: "♣",
+  spades: "♠",
+};
+
+export type TCard = {
+  suit: "hearts" | "diamonds" | "clubs" | "spades";
+  rank: "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K";
+  id: string;
+  isFaceUp: boolean;
+};
+
+export const createDeck = (): TCard[] => {
+  const suits = ["hearts", "diamonds", "clubs", "spades"] as const;
+  const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] as const;
+
+  const deck: TCard[] = [];
+
+  suits.forEach((suit) => {
+    ranks.forEach((rank) => {
+      deck.push({
+        suit,
+        rank,
+        id: `${rank}-${suit}`,
+        isFaceUp: false,
+      });
+    });
+  });
+
+  //   console.log("createDeck", deck);
+
+  return deck;
+};
+
+export const shuffleDeck = (deck: TCard[]): TCard[] => {
+  const shuffled = [...deck];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  // console.log("shuffleDeck", shuffled);
+
+  return shuffled;
+};
+
+export const fillColumnsWithCards = (deck: TCard[], columns: TCard[][]) => {
+  const halfDeckForColumns = deck.slice(0, 28);
+  // console.log("halfDeckForColumns", halfDeckForColumns);
+
+  let currentIndex = 0;
+
+  const arrayColumnsWithCards = columns.map((_, index: number) => {
+    const count = index + 1; // сколько карт в колонке
+
+    const columnCards = halfDeckForColumns.slice(currentIndex, currentIndex + count);
+
+    columnCards[columnCards.length - 1].isFaceUp = true;
+
+    // console.log("columnCards", columnCards);
+
+    currentIndex += count; // сдвигаем указатель
+
+    return columnCards;
+  });
+
+  // console.log("arrayColumnsWithCards", arrayColumnsWithCards);
+
+  return arrayColumnsWithCards;
+};

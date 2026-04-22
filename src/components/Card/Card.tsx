@@ -7,7 +7,7 @@ interface CardProps {
 }
 
 export const Card = ({ data }: CardProps) => {
-  console.log("cardpropsdata", data);
+  // console.log("cardpropsdata", data);
 
   const [{ isDragStart }, dragRef] = useDrag({
     type: "card",

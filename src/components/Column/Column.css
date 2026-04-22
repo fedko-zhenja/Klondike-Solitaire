@@ -1,3 +1,7 @@
+.game__column {
+  position: relative;
+}
+
 .dragging {
   outline: 1px solid white;
 }
