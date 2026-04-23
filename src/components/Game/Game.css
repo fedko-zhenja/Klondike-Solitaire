@@ -53,12 +53,22 @@
   gap: 16px;
 }
 
-.game__waste {
+/* .game__waste {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
+} */
 
 .game__stock {
   position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game__stock_restart-btn {
+  font-size: 40px;
+  color: #cdcdcd;
+  cursor: pointer;
 }
