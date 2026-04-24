@@ -1,25 +1,32 @@
 import { useDrop } from "react-dnd";
 import { DraggedCard } from "../DraggedCard/DraggedCard";
-import type { ICard } from "../Game/Game";
+// import type { ICard } from "../Game/Game";
 import type { TCard } from "../../helper";
 import "./Column.css";
 
 interface ColumnProps {
   columnIndex: number;
   cards: TCard[];
-  onDropCard: (card: ICard, columnIndex: number) => void;
+  onDropCardFromWasteToColumn: (card: TCard, columnIndex: number) => void;
+  canMoveCardToColumn: (card: TCard, columnIndex: number) => boolean;
 }
 
-export const Column = ({ columnIndex, cards, onDropCard }: ColumnProps) => {
-  const [{ isDragging }, dropRef] = useDrop(() => ({
-    accept: "card",
-    drop: (card: ICard) => {
-      onDropCard(card, columnIndex);
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isOver(),
+export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn }: ColumnProps) => {
+  const [{ isDragging }, dropRef] = useDrop(
+    () => ({
+      accept: "waste-card",
+      canDrop: (card: TCard) => {
+        return canMoveCardToColumn(card, columnIndex);
+      },
+      drop: (card: TCard) => {
+        onDropCardFromWasteToColumn(card, columnIndex);
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isOver(),
+      }),
     }),
-  }));
+    [columnIndex, cards, canMoveCardToColumn, onDropCardFromWasteToColumn],
+  );
 
   // console.log("Column", cards);
 

@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Card } from "../Card/Card";
+import { useState, useEffect, useCallback } from "react";
+// import { Card } from "../Card/Card";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
-import { createDeck, shuffleDeck, fillColumnsWithCards } from "../../helper";
+import { createDeck, shuffleDeck, fillColumnsWithCards, arrayRanks, arraySuits } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
 
@@ -11,40 +11,51 @@ export interface ICard {
   name: string;
 }
 
-const startDeck: ICard[] = [{ name: "card1" }, { name: "card2" }, { name: "card3" }];
+// const startDeck: ICard[] = [{ name: "card1" }, { name: "card2" }, { name: "card3" }];
 
 export const Game = () => {
-  const [elements, setElements] = useState<ICard[]>([]);
+  // const [elements, setElements] = useState<ICard[]>([]);
 
   const [wasteDeck, setWasteDeck] = useState<TCard[]>([]);
   const [stockDeck, setStockDeck] = useState<TCard[]>([]);
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
 
   const stockCardClick = (card: TCard) => {
-    console.log("stockCardClick", card);
-    // card.isFaceUp = true;
+    if (stockDeck.length === 0) {
+      return;
+    }
 
-    //     const clickedCard = card;
-    // clickedCard.isFaceUp = true;
+    const lastCard = stockDeck[stockDeck.length - 1]; // или card из аргумента ?
 
-    setWasteDeck((prev) => [...prev, card]);
+    const openedCard = {
+      ...lastCard,
+      isFaceUp: true,
+    };
 
-    setStockDeck(stockDeck.slice(0, stockDeck.length - 1));
+    console.log("openedCard", openedCard);
+
+    setWasteDeck((prev) => [...prev, openedCard]);
+    setStockDeck((prev) => prev.slice(0, prev.length - 1));
   };
 
   const handleRestartStockDeck = () => {
-    // isFaceUp = false;
-    setStockDeck([...wasteDeck]);
+    const closedCards = [...wasteDeck].reverse().map((card) => ({
+      ...card,
+      isFaceUp: false,
+    }));
+
+    setStockDeck(closedCards);
     setWasteDeck([]);
   };
 
-  // useEffect(() => {
-  //   console.log("wasteDeck", wasteDeck);
-  //   console.log("stockDeck", stockDeck);
-  // }, [wasteDeck, stockDeck]);
+  useEffect(() => {
+    console.log("wasteDeck", wasteDeck);
+    console.log("stockDeck", stockDeck);
+    console.log("columns", columns);
+  }, [wasteDeck, stockDeck, columns]);
 
-  const onDropCard = (card: TCard, columnIndex: number) => {
-    setElements((prev) => prev.filter((item) => item.name !== card.name));
+  const onDropCardFromWasteToColumn = (card: TCard, columnIndex: number) => {
+    setWasteDeck((prev) => prev.filter((item) => item.id !== card.id));
 
     setColumns((prev) =>
       prev.map((column, index) => {
@@ -57,17 +68,39 @@ export const Game = () => {
     );
   };
 
+  // const canMoveCardToColumn = (card: TCard, columnIndex: number) => {
+  //   // arrayRanks, arraySuits
+  //   // console.log(card, columnIndex);
+  //   // return true;
+  //   // const lastCardInColumn = columns;
+  //   console.log("cardDROP", card);
+  //   console.log("lastCardInColumn", columns);
+  // };
+
+  const canMoveCardToColumn = useCallback(
+    (card: TCard, columnIndex: number) => {
+      console.log("cardDROP", card);
+      const lastCardInColumn = columns[columnIndex][columns[columnIndex].length - 1];
+
+      if (!lastCardInColumn && card.rank === "K") {
+        // К это меджик стринг
+        return true;
+      }
+    },
+    [columns],
+  );
+
   useEffect(() => {
-    setElements(startDeck);
+    // setElements(startDeck);
     const deck = createDeck();
-    const shuffledDeck = shuffleDeck(deck);
+    const shuffledDeck = shuffleDeck(deck); //добавить в стейт?
 
     const arrayColumnsWithCards = fillColumnsWithCards(shuffledDeck, columns);
     setColumns(arrayColumnsWithCards);
 
     const arrayStockDeck = shuffledDeck.slice(28, 52);
     setStockDeck(arrayStockDeck);
-    console.log("arrayStockDeck", arrayStockDeck);
+    // console.log("arrayStockDeck", arrayStockDeck);
   }, []);
 
   return (
@@ -112,7 +145,7 @@ export const Game = () => {
               <Column key={index} draggedElements={draggedElements} onDropCard={onDropCard} />
             ))} */}
             {columns.map((column, index) => (
-              <Column key={index} columnIndex={index} cards={column} onDropCard={onDropCard} />
+              <Column key={index} columnIndex={index} cards={column} onDropCardFromWasteToColumn={onDropCardFromWasteToColumn} canMoveCardToColumn={canMoveCardToColumn} />
             ))}
           </div>
         </div>

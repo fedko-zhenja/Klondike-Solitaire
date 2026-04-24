@@ -12,14 +12,14 @@ export type TCard = {
   isFaceUp: boolean;
 };
 
-export const createDeck = (): TCard[] => {
-  const suits = ["hearts", "diamonds", "clubs", "spades"] as const;
-  const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] as const;
+export const arraySuits = ["hearts", "diamonds", "clubs", "spades"] as const;
+export const arrayRanks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] as const;
 
+export const createDeck = (): TCard[] => {
   const deck: TCard[] = [];
 
-  suits.forEach((suit) => {
-    ranks.forEach((rank) => {
+  arraySuits.forEach((suit) => {
+    arrayRanks.forEach((rank) => {
       deck.push({
         suit,
         rank,

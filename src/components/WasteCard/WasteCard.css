@@ -22,3 +22,7 @@
 .card-waste_spades {
   color: #222;
 }
+
+.card-waste-dragged {
+  opacity: 0;
+}
