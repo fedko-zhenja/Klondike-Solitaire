@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
-import { createDeck, shuffleDeck, fillColumnsWithCards, arrayRanks, arraySuits } from "../../helper";
+import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
 
@@ -11,11 +11,7 @@ export interface ICard {
   name: string;
 }
 
-// const startDeck: ICard[] = [{ name: "card1" }, { name: "card2" }, { name: "card3" }];
-
 export const Game = () => {
-  // const [elements, setElements] = useState<ICard[]>([]);
-
   const [wasteDeck, setWasteDeck] = useState<TCard[]>([]);
   const [stockDeck, setStockDeck] = useState<TCard[]>([]);
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
@@ -68,24 +64,23 @@ export const Game = () => {
     );
   };
 
-  // const canMoveCardToColumn = (card: TCard, columnIndex: number) => {
-  //   // arrayRanks, arraySuits
-  //   // console.log(card, columnIndex);
-  //   // return true;
-  //   // const lastCardInColumn = columns;
-  //   console.log("cardDROP", card);
-  //   console.log("lastCardInColumn", columns);
-  // };
-
   const canMoveCardToColumn = useCallback(
     (card: TCard, columnIndex: number) => {
-      console.log("cardDROP", card);
       const lastCardInColumn = columns[columnIndex][columns[columnIndex].length - 1];
 
-      if (!lastCardInColumn && card.rank === "K") {
-        // К это меджик стринг
-        return true;
+      if (!lastCardInColumn) {
+        return card.rank === "K";
       }
+
+      if (getCardSuitColor(card.suit) === getCardSuitColor(lastCardInColumn.suit)) {
+        return false;
+      }
+
+      if (getCardRankValue(card.rank) !== getCardRankValue(lastCardInColumn.rank) - 1) {
+        return false;
+      }
+
+      return true;
     },
     [columns],
   );

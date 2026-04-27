@@ -19,7 +19,7 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
         return canMoveCardToColumn(card, columnIndex);
       },
       drop: (card: TCard) => {
-        onDropCardFromWasteToColumn(card, columnIndex);
+        onDropCardFromWasteToColumn(card, columnIndex); //нужно чтоб дроп был именно на нижнюю карту
       },
       collect: (monitor) => ({
         isDragging: monitor.isOver(),

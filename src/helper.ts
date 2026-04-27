@@ -71,3 +71,15 @@ export const fillColumnsWithCards = (deck: TCard[], columns: TCard[][]) => {
 
   return arrayColumnsWithCards;
 };
+
+export const getCardSuitColor = (suit: TCard["suit"]) => {
+  return suit === "hearts" || suit === "diamonds" ? "red" : "black";
+};
+
+export const getCardRankValue = (rank: TCard["rank"]): number => {
+  if (rank === "A") return 1;
+  if (rank === "J") return 11;
+  if (rank === "Q") return 12;
+  if (rank === "K") return 13;
+  return parseInt(rank);
+};
