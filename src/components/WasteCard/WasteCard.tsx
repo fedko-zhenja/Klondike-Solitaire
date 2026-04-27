@@ -1,18 +1,17 @@
 // import type { ICard } from "../Game/Game";
 import type { TCard } from "../../helper";
 import { suitSymbols } from "../../helper";
-import "./WasteCard.css";
-
 import { useDrag } from "react-dnd";
+import "./WasteCard.css";
 
 interface WasteCardProps {
   card: TCard;
-  index: number;
 }
-export const WasteCard = ({ card, index }: WasteCardProps) => {
+
+export const WasteCard = ({ card }: WasteCardProps) => {
   const [{ isDragStart }, dragRef] = useDrag({
     type: "waste-card",
-    item: card,
+    item: { type: "waste-card", card },
     collect: (monitor) => ({
       isDragStart: monitor.isDragging(),
     }),

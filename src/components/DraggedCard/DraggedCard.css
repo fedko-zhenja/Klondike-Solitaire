@@ -48,3 +48,7 @@
 /* .first-card {
   top: 0px !important;
 } */
+
+.card-column-dragged {
+  opacity: 0;
+}

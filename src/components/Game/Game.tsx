@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
-import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue } from "../../helper";
+import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue, openCard } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
 
@@ -23,12 +23,14 @@ export const Game = () => {
 
     const lastCard = stockDeck[stockDeck.length - 1]; // или card из аргумента ?
 
-    const openedCard = {
-      ...lastCard,
-      isFaceUp: true,
-    };
+    // const openedCard = {
+    //   ...lastCard,
+    //   isFaceUp: true,
+    // };
 
-    console.log("openedCard", openedCard);
+    const openedCard = openCard(lastCard); //проверить правильно ли работает
+
+    // console.log("openedCard", openedCard);
 
     setWasteDeck((prev) => [...prev, openedCard]);
     setStockDeck((prev) => prev.slice(0, prev.length - 1));
@@ -66,6 +68,8 @@ export const Game = () => {
 
   const canMoveCardToColumn = useCallback(
     (card: TCard, columnIndex: number) => {
+      console.log("canMoveCardToColumn");
+
       const lastCardInColumn = columns[columnIndex][columns[columnIndex].length - 1];
 
       if (!lastCardInColumn) {
@@ -84,6 +88,28 @@ export const Game = () => {
     },
     [columns],
   );
+
+  const onDropCardFromColumnToOtherColumn = (card: TCard, cardColumnIndex: number, columnIndex: number) => {
+    console.log("onDropCardFromColumnToOtherColumn", card, cardColumnIndex, columnIndex);
+
+    setColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === cardColumnIndex) {
+          const newColumn = column.filter((item) => item.id !== card.id);
+          if (newColumn.length === 0) return newColumn;
+
+          const lastIndex = newColumn.length - 1;
+
+          const updatedLastCard = openCard(newColumn[lastIndex]);
+
+          return [...newColumn.slice(0, lastIndex), updatedLastCard];
+        } else if (index === columnIndex) {
+          return [...column, card];
+        }
+        return column;
+      }),
+    );
+  };
 
   useEffect(() => {
     // setElements(startDeck);
@@ -104,8 +130,8 @@ export const Game = () => {
         <div className="game__top">
           <div className="game__deck">
             <div className="game__stock">
-              {stockDeck.map((card, index) => (
-                <StockCard key={card.id} card={card} index={index} stockCardClick={stockCardClick} />
+              {stockDeck.map((card) => (
+                <StockCard key={card.id} card={card} stockCardClick={stockCardClick} />
               ))}
 
               {stockDeck.length ? (
@@ -118,8 +144,8 @@ export const Game = () => {
             </div>
 
             <div className="game__waste">
-              {wasteDeck.map((card, index) => (
-                <WasteCard key={card.id} card={card} index={index} />
+              {wasteDeck.map((card) => (
+                <WasteCard key={card.id} card={card} />
               ))}
               {/* {elements.map((data, index) => (
                 <Card key={index} data={data} />
@@ -140,7 +166,7 @@ export const Game = () => {
               <Column key={index} draggedElements={draggedElements} onDropCard={onDropCard} />
             ))} */}
             {columns.map((column, index) => (
-              <Column key={index} columnIndex={index} cards={column} onDropCardFromWasteToColumn={onDropCardFromWasteToColumn} canMoveCardToColumn={canMoveCardToColumn} />
+              <Column key={index} columnIndex={index} cards={column} onDropCardFromWasteToColumn={onDropCardFromWasteToColumn} canMoveCardToColumn={canMoveCardToColumn} onDropCardFromColumnToOtherColumn={onDropCardFromColumnToOtherColumn} />
             ))}
           </div>
         </div>

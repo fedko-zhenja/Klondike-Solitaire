@@ -9,17 +9,51 @@ interface ColumnProps {
   cards: TCard[];
   onDropCardFromWasteToColumn: (card: TCard, columnIndex: number) => void;
   canMoveCardToColumn: (card: TCard, columnIndex: number) => boolean;
+  onDropCardFromColumnToOtherColumn: (card: TCard, cardColumnIndex: number, columnIndex: number) => void;
 }
 
-export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn }: ColumnProps) => {
+// type WasteDragItem = {
+//   card: TCard;
+// };
+
+// type ColumnDragItem = {
+//   card: TCard;
+//   cardColumnIndex: number;
+// };
+
+// type DragItem = WasteDragItem | ColumnDragItem;
+
+type WasteDragItem = {
+  type: "waste-card";
+  card: TCard;
+};
+
+type ColumnDragItem = {
+  type: "column-card";
+  card: TCard;
+  cardColumnIndex: number;
+};
+
+type DragItem = WasteDragItem | ColumnDragItem;
+
+export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn, onDropCardFromColumnToOtherColumn }: ColumnProps) => {
   const [{ isDragging }, dropRef] = useDrop(
     () => ({
-      accept: "waste-card",
-      canDrop: (card: TCard) => {
+      // accept: "waste-card",
+      accept: ["waste-card", "column-card"],
+      canDrop: ({ card }: DragItem) => {
         return canMoveCardToColumn(card, columnIndex);
       },
-      drop: (card: TCard) => {
-        onDropCardFromWasteToColumn(card, columnIndex); //нужно чтоб дроп был именно на нижнюю карту
+      drop: (item: DragItem) => {
+        if (item.type === "waste-card") {
+          console.log("waste-card");
+          onDropCardFromWasteToColumn(item.card, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
+        }
+
+        if (item.type === "column-card") {
+          console.log("column-card");
+          onDropCardFromColumnToOtherColumn(item.card, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
+        }
       },
       collect: (monitor) => ({
         isDragging: monitor.isOver(),
@@ -28,12 +62,10 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
     [columnIndex, cards, canMoveCardToColumn, onDropCardFromWasteToColumn],
   );
 
-  // console.log("Column", cards);
-
   return (
     <div className={isDragging ? "game__column dragging" : "game__column"} ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
       {cards.map((card, index) => (
-        <DraggedCard key={card.id} card={card} index={index} />
+        <DraggedCard key={card.id} card={card} columnIndex={columnIndex} index={index} />
       ))}
     </div>
   );

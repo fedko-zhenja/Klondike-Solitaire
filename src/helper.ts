@@ -83,3 +83,7 @@ export const getCardRankValue = (rank: TCard["rank"]): number => {
   if (rank === "K") return 13;
   return parseInt(rank);
 };
+
+export const openCard = (card: TCard): TCard => {
+  return { ...card, isFaceUp: true };
+};
