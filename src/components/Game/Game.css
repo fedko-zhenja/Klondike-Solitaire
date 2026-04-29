@@ -71,4 +71,5 @@
   font-size: 40px;
   color: #cdcdcd;
   cursor: pointer;
+  user-select: none;
 }

@@ -22,15 +22,7 @@ export const Game = () => {
     }
 
     const lastCard = stockDeck[stockDeck.length - 1]; // или card из аргумента ?
-
-    // const openedCard = {
-    //   ...lastCard,
-    //   isFaceUp: true,
-    // };
-
     const openedCard = openCard(lastCard); //проверить правильно ли работает
-
-    // console.log("openedCard", openedCard);
 
     setWasteDeck((prev) => [...prev, openedCard]);
     setStockDeck((prev) => prev.slice(0, prev.length - 1));
@@ -147,9 +139,6 @@ export const Game = () => {
               {wasteDeck.map((card) => (
                 <WasteCard key={card.id} card={card} />
               ))}
-              {/* {elements.map((data, index) => (
-                <Card key={index} data={data} />
-              ))} */}
             </div>
           </div>
 
@@ -162,9 +151,6 @@ export const Game = () => {
 
         <div className="game__bottom">
           <div className="game__tableau">
-            {/* {Array.from({ length: 7 }).map((_, index) => (
-              <Column key={index} draggedElements={draggedElements} onDropCard={onDropCard} />
-            ))} */}
             {columns.map((column, index) => (
               <Column key={index} columnIndex={index} cards={column} onDropCardFromWasteToColumn={onDropCardFromWasteToColumn} canMoveCardToColumn={canMoveCardToColumn} onDropCardFromColumnToOtherColumn={onDropCardFromColumnToOtherColumn} />
             ))}
