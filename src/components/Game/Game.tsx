@@ -81,13 +81,14 @@ export const Game = () => {
     [columns],
   );
 
-  const onDropCardFromColumnToOtherColumn = (card: TCard, cardColumnIndex: number, columnIndex: number) => {
-    console.log("onDropCardFromColumnToOtherColumn", card, cardColumnIndex, columnIndex);
+  const onDropCardFromColumnToOtherColumn = (movingCards: TCard[], cardIndex: number, cardColumnIndex: number, columnIndex: number) => {
+    console.log("onDropCardFromColumnToOtherColumn", movingCards, cardIndex, cardColumnIndex, columnIndex);
 
     setColumns((prev) =>
       prev.map((column, index) => {
         if (index === cardColumnIndex) {
-          const newColumn = column.filter((item) => item.id !== card.id);
+          // const newColumn = column.filter((item) => item.id !== card.id);
+          const newColumn = column.slice(0, cardIndex);
           if (newColumn.length === 0) return newColumn;
 
           const lastIndex = newColumn.length - 1;
@@ -96,7 +97,7 @@ export const Game = () => {
 
           return [...newColumn.slice(0, lastIndex), updatedLastCard];
         } else if (index === columnIndex) {
-          return [...column, card];
+          return [...column, ...movingCards];
         }
         return column;
       }),

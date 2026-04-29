@@ -9,7 +9,7 @@ interface ColumnProps {
   cards: TCard[];
   onDropCardFromWasteToColumn: (card: TCard, columnIndex: number) => void;
   canMoveCardToColumn: (card: TCard, columnIndex: number) => boolean;
-  onDropCardFromColumnToOtherColumn: (card: TCard, cardColumnIndex: number, columnIndex: number) => void;
+  onDropCardFromColumnToOtherColumn: (movingCards: TCard[], cardIndex: number, cardColumnIndex: number, columnIndex: number) => void;
 }
 
 // type WasteDragItem = {
@@ -31,7 +31,9 @@ type WasteDragItem = {
 type ColumnDragItem = {
   type: "column-card";
   card: TCard;
+  cardIndex: number;
   cardColumnIndex: number;
+  movingCards: TCard[];
 };
 
 type DragItem = WasteDragItem | ColumnDragItem;
@@ -52,7 +54,7 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
 
         if (item.type === "column-card") {
           console.log("column-card");
-          onDropCardFromColumnToOtherColumn(item.card, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
+          onDropCardFromColumnToOtherColumn(item.movingCards, item.cardIndex, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
         }
       },
       collect: (monitor) => ({
@@ -65,7 +67,7 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
   return (
     <div className={isDragging ? "game__column dragging" : "game__column"} ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
       {cards.map((card, index) => (
-        <DraggedCard key={card.id} card={card} columnIndex={columnIndex} index={index} />
+        <DraggedCard key={card.id} card={card} cards={cards} columnIndex={columnIndex} index={index} />
       ))}
     </div>
   );
