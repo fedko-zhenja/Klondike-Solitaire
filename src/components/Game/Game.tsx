@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
+import { FoundationsColumns } from "../FoundationsColumns/FoundationsColumns";
 import { CustomDragLayer } from "../CustomDragLayer/CustomDragLayer";
 import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue, openCard } from "../../helper";
 import type { TCard } from "../../helper";
@@ -15,6 +16,7 @@ export const Game = () => {
   const [wasteDeck, setWasteDeck] = useState<TCard[]>([]);
   const [stockDeck, setStockDeck] = useState<TCard[]>([]);
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
+  const [foundationsColumns, setFoundationsColumns] = useState<TCard[][]>([[], [], [], []]);
 
   const stockCardClick = (card: TCard) => {
     if (stockDeck.length === 0) {
@@ -104,6 +106,74 @@ export const Game = () => {
     );
   };
 
+  const canMoveCardToFoundationColumn = useCallback(
+    //вынести в хелпер
+    (card: TCard, columnIndex: number) => {
+      console.log("canMoveCardToFoundationColumn");
+
+      const lastCardInColumn = foundationsColumns[columnIndex][foundationsColumns[columnIndex].length - 1];
+
+      if (!lastCardInColumn) {
+        console.log("First card in foundation column", card.rank);
+
+        return card.rank === "A";
+      }
+
+      if (getCardSuitColor(card.suit) !== getCardSuitColor(lastCardInColumn.suit)) {
+        return false;
+      }
+
+      if (getCardRankValue(card.rank) !== getCardRankValue(lastCardInColumn.rank) + 1) {
+        return false;
+      }
+
+      return true;
+    },
+    [foundationsColumns],
+  );
+
+  const onDropCardFromWasteToFoundationColumn = (card: TCard, columnIndex: number) => {
+    console.log("onDropCardFromWasteToFoundationColumn");
+    setWasteDeck((prev) => prev.filter((item) => item.id !== card.id));
+
+    setFoundationsColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === columnIndex) {
+          return [...column, card];
+        } else {
+          return column;
+        }
+      }),
+    );
+  };
+
+  const onDropCardFromColumnToFoundationColumn = (card: TCard, cardColumnIndex: number, columnIndex: number) => {
+    console.log("onDropCardFromColumnToFoundationColumn");
+    setColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === cardColumnIndex) {
+          const newColumn = column.filter((item) => item.id !== card.id);
+          if (newColumn.length === 0) return newColumn;
+          const lastIndex = newColumn.length - 1;
+          const updatedLastCard = openCard(newColumn[lastIndex]);
+          return [...newColumn.slice(0, lastIndex), updatedLastCard];
+        } else {
+          return column;
+        }
+      }),
+    );
+
+    setFoundationsColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === columnIndex) {
+          return [...column, card];
+        } else {
+          return column;
+        }
+      }),
+    );
+  };
+
   useEffect(() => {
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck); //добавить в стейт?
@@ -142,8 +212,15 @@ export const Game = () => {
           </div>
 
           <div className="game__foundations">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="game__foundation"></div>
+            {foundationsColumns.map((column, index) => (
+              <FoundationsColumns
+                key={index}
+                columnIndex={index}
+                cards={column}
+                canMoveCardToFoundationColumn={canMoveCardToFoundationColumn}
+                onDropCardFromWasteToFoundationColumn={onDropCardFromWasteToFoundationColumn}
+                onDropCardFromColumnToFoundationColumn={onDropCardFromColumnToFoundationColumn}
+              />
             ))}
           </div>
         </div>
