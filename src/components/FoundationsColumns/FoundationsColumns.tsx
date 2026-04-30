@@ -55,7 +55,7 @@ export const FoundationsColumns = ({ columnIndex, cards, canMoveCardToFoundation
   return (
     <div className="game__foundation" ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
       {cards.map((card) => (
-        <FoundationsCard key={card.id} card={card} />
+        <FoundationsCard key={card.id} card={card} columnIndex={columnIndex} />
       ))}
     </div>
   );

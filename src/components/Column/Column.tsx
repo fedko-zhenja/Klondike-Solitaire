@@ -9,6 +9,7 @@ interface ColumnProps {
   onDropCardFromWasteToColumn: (card: TCard, columnIndex: number) => void;
   canMoveCardToColumn: (card: TCard, columnIndex: number) => boolean;
   onDropCardFromColumnToOtherColumn: (movingCards: TCard[], cardIndex: number, cardColumnIndex: number, columnIndex: number) => void;
+  onDropCardFromFoundationColumnToColumn: (card: TCard, cardColumnIndex: number, columnIndex: number) => void;
 }
 
 type WasteDragItem = {
@@ -24,12 +25,18 @@ type ColumnDragItem = {
   movingCards: TCard[];
 };
 
-type DragItem = WasteDragItem | ColumnDragItem;
+type FoundationDragItem = {
+  type: "foundation-card";
+  card: TCard;
+  cardColumnIndex: number;
+};
 
-export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn, onDropCardFromColumnToOtherColumn }: ColumnProps) => {
+type DragItem = WasteDragItem | ColumnDragItem | FoundationDragItem;
+
+export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn, onDropCardFromColumnToOtherColumn, onDropCardFromFoundationColumnToColumn }: ColumnProps) => {
   const [{ isDragging }, dropRef] = useDrop(
     () => ({
-      accept: ["waste-card", "column-card"],
+      accept: ["waste-card", "column-card", "foundation-card"],
       canDrop: ({ card }: DragItem) => {
         return canMoveCardToColumn(card, columnIndex);
       },
@@ -43,12 +50,18 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
           console.log("column-card");
           onDropCardFromColumnToOtherColumn(item.movingCards, item.cardIndex, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
         }
+
+        if (item.type === "foundation-card") {
+          console.log("foundation-card");
+          // Handle foundation card drop
+          onDropCardFromFoundationColumnToColumn(item.card, item.cardColumnIndex, columnIndex);
+        }
       },
       collect: (monitor) => ({
         isDragging: monitor.isOver(),
       }),
     }),
-    [columnIndex, cards, canMoveCardToColumn, onDropCardFromWasteToColumn],
+    [columnIndex, cards, canMoveCardToColumn, onDropCardFromWasteToColumn, onDropCardFromColumnToOtherColumn, onDropCardFromFoundationColumnToColumn],
   );
 
   return (

@@ -174,6 +174,29 @@ export const Game = () => {
     );
   };
 
+  const onDropCardFromFoundationColumnToColumn = (card: TCard, cardColumnIndex: number, columnIndex: number) => {
+    console.log("onDropCardFromFoundationColumnToColumn");
+    setFoundationsColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === cardColumnIndex) {
+          return column.filter((item) => item.id !== card.id);
+        } else {
+          return column;
+        }
+      }),
+    );
+
+    setColumns((prev) =>
+      prev.map((column, index) => {
+        if (index === columnIndex) {
+          return [...column, card];
+        }
+
+        return column;
+      }),
+    );
+  };
+
   useEffect(() => {
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck); //добавить в стейт?
@@ -228,7 +251,15 @@ export const Game = () => {
         <div className="game__bottom">
           <div className="game__tableau">
             {columns.map((column, index) => (
-              <Column key={index} columnIndex={index} cards={column} onDropCardFromWasteToColumn={onDropCardFromWasteToColumn} canMoveCardToColumn={canMoveCardToColumn} onDropCardFromColumnToOtherColumn={onDropCardFromColumnToOtherColumn} />
+              <Column
+                key={index}
+                columnIndex={index}
+                cards={column}
+                onDropCardFromWasteToColumn={onDropCardFromWasteToColumn}
+                canMoveCardToColumn={canMoveCardToColumn}
+                onDropCardFromColumnToOtherColumn={onDropCardFromColumnToOtherColumn}
+                onDropCardFromFoundationColumnToColumn={onDropCardFromFoundationColumnToColumn}
+              />
             ))}
           </div>
         </div>
