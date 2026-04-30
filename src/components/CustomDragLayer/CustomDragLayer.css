@@ -1,0 +1,14 @@
+.custom-drag-layer {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  inset: 0;
+}
+
+.custom-drag-layer__cards {
+  position: absolute;
+}
+
+.custom-drag-layer__cards .card {
+  position: absolute;
+}

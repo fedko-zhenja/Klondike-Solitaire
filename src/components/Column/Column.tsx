@@ -1,6 +1,5 @@
 import { useDrop } from "react-dnd";
 import { DraggedCard } from "../DraggedCard/DraggedCard";
-// import type { ICard } from "../Game/Game";
 import type { TCard } from "../../helper";
 import "./Column.css";
 
@@ -11,17 +10,6 @@ interface ColumnProps {
   canMoveCardToColumn: (card: TCard, columnIndex: number) => boolean;
   onDropCardFromColumnToOtherColumn: (movingCards: TCard[], cardIndex: number, cardColumnIndex: number, columnIndex: number) => void;
 }
-
-// type WasteDragItem = {
-//   card: TCard;
-// };
-
-// type ColumnDragItem = {
-//   card: TCard;
-//   cardColumnIndex: number;
-// };
-
-// type DragItem = WasteDragItem | ColumnDragItem;
 
 type WasteDragItem = {
   type: "waste-card";
@@ -41,7 +29,6 @@ type DragItem = WasteDragItem | ColumnDragItem;
 export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn, onDropCardFromColumnToOtherColumn }: ColumnProps) => {
   const [{ isDragging }, dropRef] = useDrop(
     () => ({
-      // accept: "waste-card",
       accept: ["waste-card", "column-card"],
       canDrop: ({ card }: DragItem) => {
         return canMoveCardToColumn(card, columnIndex);

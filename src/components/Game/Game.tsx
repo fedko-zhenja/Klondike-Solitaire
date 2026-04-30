@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-// import { Card } from "../Card/Card";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
+import { CustomDragLayer } from "../CustomDragLayer/CustomDragLayer";
 import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue, openCard } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
@@ -59,6 +59,7 @@ export const Game = () => {
   };
 
   const canMoveCardToColumn = useCallback(
+    //вынести в хелпер
     (card: TCard, columnIndex: number) => {
       console.log("canMoveCardToColumn");
 
@@ -87,7 +88,6 @@ export const Game = () => {
     setColumns((prev) =>
       prev.map((column, index) => {
         if (index === cardColumnIndex) {
-          // const newColumn = column.filter((item) => item.id !== card.id);
           const newColumn = column.slice(0, cardIndex);
           if (newColumn.length === 0) return newColumn;
 
@@ -105,7 +105,6 @@ export const Game = () => {
   };
 
   useEffect(() => {
-    // setElements(startDeck);
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck); //добавить в стейт?
 
@@ -114,7 +113,6 @@ export const Game = () => {
 
     const arrayStockDeck = shuffledDeck.slice(28, 52);
     setStockDeck(arrayStockDeck);
-    // console.log("arrayStockDeck", arrayStockDeck);
   }, []);
 
   return (
@@ -158,6 +156,7 @@ export const Game = () => {
           </div>
         </div>
       </div>
+      <CustomDragLayer />
     </div>
   );
 };
