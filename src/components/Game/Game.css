@@ -73,3 +73,14 @@
   cursor: pointer;
   user-select: none;
 }
+
+.game-won {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  color: #4bff51;
+  font-weight: bold;
+  z-index: 1;
+}

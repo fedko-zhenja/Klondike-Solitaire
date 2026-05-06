@@ -87,3 +87,7 @@ export const getCardRankValue = (rank: TCard["rank"]): number => {
 export const openCard = (card: TCard): TCard => {
   return { ...card, isFaceUp: true };
 };
+
+export const isWin = (foundationsColumns: TCard[][]): boolean => {
+  return foundationsColumns.every((column) => column.length === 13);
+};

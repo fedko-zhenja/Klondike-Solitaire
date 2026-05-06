@@ -5,7 +5,7 @@ import { StockCard } from "../StockCard/StockCard";
 import { WasteCard } from "../WasteCard/WasteCard";
 import { FoundationsColumns } from "../FoundationsColumns/FoundationsColumns";
 import { CustomDragLayer } from "../CustomDragLayer/CustomDragLayer";
-import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue, openCard } from "../../helper";
+import { createDeck, shuffleDeck, fillColumnsWithCards, getCardSuitColor, getCardRankValue, openCard, isWin } from "../../helper";
 import type { TCard } from "../../helper";
 import "./Game.css";
 
@@ -18,6 +18,7 @@ export const Game = () => {
   const [stockDeck, setStockDeck] = useState<TCard[]>([]);
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
   const [foundationsColumns, setFoundationsColumns] = useState<TCard[][]>([[], [], [], []]);
+  const [isGameWon, setIsGameWon] = useState(false);
 
   const stockCardClick = () => {
     if (stockDeck.length === 0) {
@@ -158,15 +159,31 @@ export const Game = () => {
       }),
     );
 
-    setFoundationsColumns((prev) =>
-      prev.map((column, index) => {
+    // setFoundationsColumns((prev) =>
+    //   prev.map((column, index) => {
+    //     if (index === columnIndex) {
+    //       return [...column, card];
+    //     } else {
+    //       return column;
+    //     }
+    //   }),
+    // );
+
+    setFoundationsColumns((prev) => {
+      const newFoundationsColumns = prev.map((column, index) => {
         if (index === columnIndex) {
           return [...column, card];
-        } else {
-          return column;
         }
-      }),
-    );
+
+        return column;
+      });
+
+      if (isWin(newFoundationsColumns)) {
+        setIsGameWon(true);
+      }
+
+      return newFoundationsColumns;
+    });
   };
 
   const onDropCardFromFoundationColumnToColumn = (card: TCard, cardColumnIndex: number, columnIndex: number) => {
@@ -205,6 +222,7 @@ export const Game = () => {
 
   return (
     <div className="game-wrapper">
+      <div className={isGameWon ? "game-won" : ""}>{isGameWon ? "WIN!" : ""}</div>
       <div className="game">
         <div className="game__top">
           <div className="game__deck">
