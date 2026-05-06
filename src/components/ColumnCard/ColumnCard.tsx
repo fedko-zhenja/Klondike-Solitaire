@@ -1,16 +1,16 @@
 import type { TCard } from "../../helper";
 import { suitSymbols } from "../../helper";
 import { useDrag } from "react-dnd";
-import "./DraggedCard.css";
+import "./ColumnCard.css";
 
-interface DraggedCardProps {
+interface ColumnCardProps {
   card: TCard;
   cards: TCard[];
   columnIndex: number;
   index: number;
 }
 
-export const DraggedCard = ({ card, cards, columnIndex, index }: DraggedCardProps) => {
+export const ColumnCard = ({ card, cards, columnIndex, index }: ColumnCardProps) => {
   const [{ isDragStart }, dragRef] = useDrag(
     {
       type: "column-card",

@@ -1,5 +1,5 @@
 import { useDrop } from "react-dnd";
-import { DraggedCard } from "../DraggedCard/DraggedCard";
+import { ColumnCard } from "../ColumnCard/ColumnCard";
 import type { TCard } from "../../helper";
 import "./Column.css";
 
@@ -53,7 +53,6 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
 
         if (item.type === "foundation-card") {
           console.log("foundation-card");
-          // Handle foundation card drop
           onDropCardFromFoundationColumnToColumn(item.card, item.cardColumnIndex, columnIndex);
         }
       },
@@ -67,7 +66,7 @@ export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMov
   return (
     <div className={isDragging ? "game__column dragging" : "game__column"} ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
       {cards.map((card, index) => (
-        <DraggedCard key={card.id} card={card} cards={cards} columnIndex={columnIndex} index={index} />
+        <ColumnCard key={card.id} card={card} cards={cards} columnIndex={columnIndex} index={index} />
       ))}
     </div>
   );
