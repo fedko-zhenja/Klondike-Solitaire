@@ -1,17 +1,13 @@
-import type { TCard } from "../../helper";
 import "./StockCard.css";
 
 interface StockCardProps {
-  card: TCard;
-  stockCardClick: (value: TCard) => void;
+  stockCardClick: () => void;
 }
 
-export const StockCard = ({ card, stockCardClick }: StockCardProps) => {
+export const StockCard = ({ stockCardClick }: StockCardProps) => {
   const handleClick = () => {
-    stockCardClick(card);
+    stockCardClick();
   };
-
-  //   console.log("StockCard", card);
 
   return <div className="card-stock card-stock_back" onClick={handleClick}></div>;
 };

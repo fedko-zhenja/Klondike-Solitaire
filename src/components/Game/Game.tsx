@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback } from "react";
 import { Column } from "../Column/Column";
 import { StockCard } from "../StockCard/StockCard";
@@ -18,13 +19,13 @@ export const Game = () => {
   const [columns, setColumns] = useState<TCard[][]>([[], [], [], [], [], [], []]);
   const [foundationsColumns, setFoundationsColumns] = useState<TCard[][]>([[], [], [], []]);
 
-  const stockCardClick = (card: TCard) => {
+  const stockCardClick = () => {
     if (stockDeck.length === 0) {
       return;
     }
 
-    const lastCard = stockDeck[stockDeck.length - 1]; // или card из аргумента ?
-    const openedCard = openCard(lastCard); //проверить правильно ли работает
+    const lastCard = stockDeck[stockDeck.length - 1];
+    const openedCard = openCard(lastCard);
 
     setWasteDeck((prev) => [...prev, openedCard]);
     setStockDeck((prev) => prev.slice(0, prev.length - 1));
@@ -39,12 +40,6 @@ export const Game = () => {
     setStockDeck(closedCards);
     setWasteDeck([]);
   };
-
-  useEffect(() => {
-    console.log("wasteDeck", wasteDeck);
-    console.log("stockDeck", stockDeck);
-    console.log("columns", columns);
-  }, [wasteDeck, stockDeck, columns]);
 
   const onDropCardFromWasteToColumn = (card: TCard, columnIndex: number) => {
     setWasteDeck((prev) => prev.filter((item) => item.id !== card.id));
@@ -215,7 +210,7 @@ export const Game = () => {
           <div className="game__deck">
             <div className="game__stock">
               {stockDeck.map((card) => (
-                <StockCard key={card.id} card={card} stockCardClick={stockCardClick} />
+                <StockCard key={card.id} stockCardClick={stockCardClick} />
               ))}
 
               {stockDeck.length ? (

@@ -8,31 +8,49 @@ interface ColumnCardProps {
   cards: TCard[];
   columnIndex: number;
   index: number;
+  isHidden: boolean;
+  setDraggingCardIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-export const ColumnCard = ({ card, cards, columnIndex, index }: ColumnCardProps) => {
-  const [{ isDragStart }, dragRef] = useDrag(
-    {
+export const ColumnCard = ({ card, cards, columnIndex, index, isHidden, setDraggingCardIndex }: ColumnCardProps) => {
+  const [, dragRef] = useDrag(
+    () => ({
       type: "column-card",
-      item: { type: "column-card", card, cardIndex: index, cardColumnIndex: columnIndex, movingCards: cards.slice(index) },
+
+      item: () => {
+        setDraggingCardIndex(index);
+
+        return {
+          type: "column-card",
+          card,
+          cardIndex: index,
+          cardColumnIndex: columnIndex,
+          movingCards: cards.slice(index),
+        };
+      },
+
       canDrag: () => card.isFaceUp,
-      collect: (monitor) => ({
-        isDragStart: monitor.isDragging(),
-      }),
-    },
+
+      end: () => {
+        setDraggingCardIndex(null);
+      },
+    }),
     [card, index, columnIndex, cards],
   );
 
   if (!card.isFaceUp) {
-    return (
-      <div className="card column-card card-back" style={{ top: index * 38 }} ref={dragRef as unknown as React.Ref<HTMLDivElement>}>
-        {/* рубашка */}
-      </div>
-    );
+    return <div className="card column-card card-back" style={{ top: index * 38 }} />;
   }
 
   return (
-    <div className={`card column-card card-${card.suit}`} style={{ top: index * 38, opacity: isDragStart ? 0 : 1 }} ref={dragRef as unknown as React.Ref<HTMLDivElement>}>
+    <div
+      className={`card column-card card-${card.suit}`}
+      style={{
+        top: index * 38,
+        opacity: isHidden ? 0 : 1,
+      }}
+      ref={dragRef as unknown as React.Ref<HTMLDivElement>}
+    >
       <span>{card.rank}</span>
       <span>{suitSymbols[card.suit]}</span>
     </div>

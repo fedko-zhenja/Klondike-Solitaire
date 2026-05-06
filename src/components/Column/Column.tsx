@@ -1,4 +1,5 @@
 import { useDrop } from "react-dnd";
+import { useState } from "react";
 import { ColumnCard } from "../ColumnCard/ColumnCard";
 import type { TCard } from "../../helper";
 import "./Column.css";
@@ -34,40 +35,44 @@ type FoundationDragItem = {
 type DragItem = WasteDragItem | ColumnDragItem | FoundationDragItem;
 
 export const Column = ({ columnIndex, cards, onDropCardFromWasteToColumn, canMoveCardToColumn, onDropCardFromColumnToOtherColumn, onDropCardFromFoundationColumnToColumn }: ColumnProps) => {
-  const [{ isDragging }, dropRef] = useDrop(
+  const [draggingCardIndex, setDraggingCardIndex] = useState<number | null>(null);
+
+  const [{ isOver }, dropRef] = useDrop(
     () => ({
       accept: ["waste-card", "column-card", "foundation-card"],
-      canDrop: ({ card }: DragItem) => {
-        return canMoveCardToColumn(card, columnIndex);
+
+      canDrop: (item: DragItem) => {
+        return canMoveCardToColumn(item.card, columnIndex);
       },
+
       drop: (item: DragItem) => {
         if (item.type === "waste-card") {
-          console.log("waste-card");
-          onDropCardFromWasteToColumn(item.card, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
+          onDropCardFromWasteToColumn(item.card, columnIndex);
         }
 
         if (item.type === "column-card") {
-          console.log("column-card");
-          onDropCardFromColumnToOtherColumn(item.movingCards, item.cardIndex, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
+          onDropCardFromColumnToOtherColumn(item.movingCards, item.cardIndex, item.cardColumnIndex, columnIndex);
         }
 
         if (item.type === "foundation-card") {
-          console.log("foundation-card");
           onDropCardFromFoundationColumnToColumn(item.card, item.cardColumnIndex, columnIndex);
         }
       },
+
       collect: (monitor) => ({
-        isDragging: monitor.isOver(),
+        isOver: monitor.isOver(),
       }),
     }),
     [columnIndex, cards, canMoveCardToColumn, onDropCardFromWasteToColumn, onDropCardFromColumnToOtherColumn, onDropCardFromFoundationColumnToColumn],
   );
 
   return (
-    <div className={isDragging ? "game__column dragging" : "game__column"} ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
-      {cards.map((card, index) => (
-        <ColumnCard key={card.id} card={card} cards={cards} columnIndex={columnIndex} index={index} />
-      ))}
+    <div className={isOver ? "game__column dragging" : "game__column"} ref={dropRef as unknown as React.Ref<HTMLDivElement>}>
+      {cards.map((card, index) => {
+        const isHidden = draggingCardIndex !== null && index >= draggingCardIndex;
+
+        return <ColumnCard key={card.id} card={card} cards={cards} columnIndex={columnIndex} index={index} isHidden={isHidden} setDraggingCardIndex={setDraggingCardIndex} />;
+      })}
     </div>
   );
 };
