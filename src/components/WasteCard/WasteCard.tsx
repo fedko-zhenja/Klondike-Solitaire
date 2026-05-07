@@ -1,4 +1,3 @@
-// import type { ICard } from "../Game/Game";
 import type { TCard } from "../../helper";
 import { suitSymbols } from "../../helper";
 import { useDrag } from "react-dnd";

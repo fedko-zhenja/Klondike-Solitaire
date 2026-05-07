@@ -29,8 +29,6 @@ export const createDeck = (): TCard[] => {
     });
   });
 
-  //   console.log("createDeck", deck);
-
   return deck;
 };
 
@@ -42,14 +40,11 @@ export const shuffleDeck = (deck: TCard[]): TCard[] => {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  // console.log("shuffleDeck", shuffled);
-
   return shuffled;
 };
 
 export const fillColumnsWithCards = (deck: TCard[], columns: TCard[][]) => {
   const halfDeckForColumns = deck.slice(0, 28);
-  // console.log("halfDeckForColumns", halfDeckForColumns);
 
   let currentIndex = 0;
 
@@ -60,23 +55,19 @@ export const fillColumnsWithCards = (deck: TCard[], columns: TCard[][]) => {
 
     columnCards[columnCards.length - 1].isFaceUp = true;
 
-    // console.log("columnCards", columnCards);
-
     currentIndex += count; // сдвигаем указатель
 
     return columnCards;
   });
 
-  // console.log("arrayColumnsWithCards", arrayColumnsWithCards);
-
   return arrayColumnsWithCards;
 };
 
-export const getCardSuitColor = (suit: TCard["suit"]) => {
+const getCardSuitColor = (suit: TCard["suit"]) => {
   return suit === "hearts" || suit === "diamonds" ? "red" : "black";
 };
 
-export const getCardRankValue = (rank: TCard["rank"]): number => {
+const getCardRankValue = (rank: TCard["rank"]): number => {
   if (rank === "A") return 1;
   if (rank === "J") return 11;
   if (rank === "Q") return 12;
@@ -88,6 +79,42 @@ export const openCard = (card: TCard): TCard => {
   return { ...card, isFaceUp: true };
 };
 
+export const canMoveCardToColumn = (card: TCard, columnIndex: number, columns: TCard[][]): boolean => {
+  const lastCardInColumn = columns[columnIndex][columns[columnIndex].length - 1];
+
+  if (!lastCardInColumn) {
+    return card.rank === "K";
+  }
+
+  if (getCardSuitColor(card.suit) === getCardSuitColor(lastCardInColumn.suit)) {
+    return false;
+  }
+
+  if (getCardRankValue(card.rank) !== getCardRankValue(lastCardInColumn.rank) - 1) {
+    return false;
+  }
+
+  return true;
+};
+
 export const isWin = (foundationsColumns: TCard[][]): boolean => {
   return foundationsColumns.every((column) => column.length === 13);
+};
+
+export const canMoveCardToFoundationColumn = (card: TCard, columnIndex: number, foundationsColumns: TCard[][]): boolean => {
+  const lastCardInColumn = foundationsColumns[columnIndex][foundationsColumns[columnIndex].length - 1];
+
+  if (!lastCardInColumn) {
+    return card.rank === "A";
+  }
+
+  if (getCardSuitColor(card.suit) !== getCardSuitColor(lastCardInColumn.suit)) {
+    return false;
+  }
+
+  if (getCardRankValue(card.rank) !== getCardRankValue(lastCardInColumn.rank) + 1) {
+    return false;
+  }
+
+  return true;
 };

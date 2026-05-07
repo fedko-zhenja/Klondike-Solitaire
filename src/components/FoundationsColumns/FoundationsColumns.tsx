@@ -1,7 +1,6 @@
 import { useDrop } from "react-dnd";
 import type { TCard } from "../../helper";
 import { FoundationsCard } from "../FoundationCard/FoundationCard";
-import "./FoundationsColumns.css";
 
 interface FoundationsColumnsProps {
   columnIndex: number;
@@ -27,28 +26,21 @@ type ColumnDragItem = {
 type DragItem = WasteDragItem | ColumnDragItem;
 
 export const FoundationsColumns = ({ columnIndex, cards, canMoveCardToFoundationColumn, onDropCardFromWasteToFoundationColumn, onDropCardFromColumnToFoundationColumn }: FoundationsColumnsProps) => {
-  const [{ isDragging }, dropRef] = useDrop(
+  const [, dropRef] = useDrop(
     () => ({
       accept: ["waste-card", "column-card"],
       canDrop: ({ card }: DragItem) => {
         return canMoveCardToFoundationColumn(card, columnIndex);
       },
       drop: (item: DragItem) => {
-        console.log("drop", item);
-
         if (item.type === "waste-card") {
-          console.log("waste-card");
           onDropCardFromWasteToFoundationColumn(item.card, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
         }
 
         if (item.type === "column-card") {
-          console.log("column-card");
           onDropCardFromColumnToFoundationColumn(item.card, item.cardColumnIndex, columnIndex); //нужно чтоб дроп был именно на нижнюю карту?
         }
       },
-      collect: (monitor) => ({
-        isDragging: monitor.isOver(),
-      }),
     }),
     [columnIndex, cards, canMoveCardToFoundationColumn, onDropCardFromWasteToFoundationColumn, onDropCardFromColumnToFoundationColumn],
   );

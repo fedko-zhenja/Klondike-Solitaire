@@ -1,4 +1,3 @@
-import "./App.css";
 import { Game } from "./components/Game/Game";
 
 export function App() {
